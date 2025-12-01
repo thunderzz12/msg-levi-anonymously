@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Your Secret Note</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f0f2f5; } 
+        .card { border-radius: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-5">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-5">
+                        <h1 class="text-center mb-4 text-primary">✉️ Send a Secret Note</h1>
+                        <p class="text-center text-muted mb-4">Your connection is private. We promise your identity is hidden from the recipient.</p>
+                        
+                        <form method="POST" id="anon-form">
+                            <div class="mb-3">
+                                <textarea class="form-control" name="message" rows="6" 
+                                          placeholder="Type your anonymous message here..." required></textarea>
+                            </div>
+
+                            <input type="hidden" id="fingerprint_data" name="fingerprint_data"> 
+                            
+                            <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">Send Anonymously</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        
+        function getCanvasFingerprint() {
+            var canvas = document.createElement('canvas');
+            var ctx = canvas.getContext('2d');
+            
+            
+            ctx.textBaseline = "top";
+            ctx.font = "14px 'Arial'";
+            ctx.fillStyle = "#f60";
+            ctx.fillRect(125,1,62,20);
+            ctx.fillStyle = "#069";
+            ctx.fillText("Fingerprint Test Text!", 2, 15);
+            
+            
+            return canvas.toDataURL(); 
+        }
+
+        function collectAllFingerprintData() {
+            var data = {
+                
+                'screen_res': screen.width + 'x' + screen.height,
+                'color_depth': screen.colorDepth,
+                'time_zone': Intl.DateTimeFormat().resolvedOptions().timeZone,
+                'platform': navigator.platform,
+                'cpu_cores': navigator.hardwareConcurrency || 'N/A',
+                
+                'canvas_hash': getCanvasFingerprint()
+            };
+            return JSON.stringify(data);
+        }
+
+        // Event listener
+        document.getElementById('anon-form').addEventListener('submit', function() {
+            var fingerprint = collectAllFingerprintData();
+            document.getElementById('fingerprint_data').value = fingerprint;
+        });
+        // ------------------------------------
+    </script>
+</body>
+</html>
